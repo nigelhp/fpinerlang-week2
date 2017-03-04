@@ -1,5 +1,5 @@
 -module(index).
--export([get_file_contents/1,show_file_contents/1,split_into_words/2]).
+-export([get_file_contents/1,show_file_contents/1,index_lines/1]).
 
 % Used to read a file into a list of lines.
 % Example files available in:
@@ -38,6 +38,19 @@ show_file_contents([L|Ls]) ->
 
 % BEGIN ...
 
+index_lines(Lines) ->
+    index_lines(Lines, 1, []).
+
+index_lines([], _LineNum, Index) ->
+    Index;
+index_lines([H|T], LineNum, Index) ->
+    Words = split_into_words(H),
+    index_lines(T, LineNum + 1, add_to_index(Index, Words, LineNum)).
+
+
+split_into_words(Line) ->
+    split_into_words(Line, []).
+
 split_into_words([], Words) ->
     Words;
 split_into_words([H|T]=Chars, Words) ->
@@ -50,3 +63,13 @@ split_into_words([H|T]=Chars, Words) ->
 
 is_word_char(Char) -> 
     (Char >= $A) and (Char =< $z).
+
+
+add_to_index(Index, [], _LineNum) ->
+    Index;
+add_to_index(Index, [Word|Words], LineNum) ->
+    add_to_index([make_index_entry(Word, LineNum) | Index], Words, LineNum).
+
+
+make_index_entry(Word, LineNum) ->
+    {Word, [LineNum]}.
