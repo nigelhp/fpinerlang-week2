@@ -38,6 +38,34 @@ show_file_contents([L|Ls]) ->
 
 % BEGIN ...
 
+% TODO {"\\consecrated",[16]}
+% TODO {"freedom","\e"}
+% TODO {"government","\e"}
+% TODO {"But","\r"},
+% TODO {"larger","\r"},
+% TODO {"sense","\r"},
+% TODO {"dedicate","\r\b"},
+% TODO {"should","\v"},
+% TODO {"do","\v"},
+% TODO {"might","\n"},
+% TODO {"live","\n"},
+% TODO {"altogether","\n"},
+% TODO {"fitting","\n"},
+% TODO {"proper","\n"},
+% TODO {"resting","\t"},
+% TODO {"place","\t"},
+% TODO {"those","\t"},
+% TODO {"their","\t"},
+% TODO {"lives","\t"},
+% TODO {"come","\b"},
+% TODO {"portion","\b"},
+% TODO {"as","\b"},
+% TODO {"final","\b"},
+
+
+% to see full contents of the resulting index:
+% io:format("~p~n", [Index])
+
 index_lines(Lines) ->
     index_lines(Lines, 1, []).
 
@@ -67,9 +95,21 @@ is_word_char(Char) ->
 
 add_to_index(Index, [], _LineNum) ->
     Index;
+add_to_index([], [Word|Words], LineNum) ->
+    add_to_index([index_entry(Word, LineNum)], Words, LineNum);
 add_to_index(Index, [Word|Words], LineNum) ->
-    add_to_index([make_index_entry(Word, LineNum) | Index], Words, LineNum).
+    LineNums = search_index(Index, Word),
+    IndexMinusWord = lists:delete({Word, LineNums}, Index),
+    add_to_index([{Word, [LineNum | LineNums]} | IndexMinusWord], Words, LineNum).
 
 
-make_index_entry(Word, LineNum) ->
+search_index([], _Word) -> 
+    [];
+search_index([{Word,LineNums}|_T], Word) ->
+    LineNums;
+search_index([_H|T], Word) ->
+    search_index(T, Word).
+
+
+index_entry(Word, LineNum) ->
     {Word, [LineNum]}.
