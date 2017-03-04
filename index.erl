@@ -1,5 +1,5 @@
 -module(index).
--export([get_file_contents/1,show_file_contents/1]).
+-export([get_file_contents/1,show_file_contents/1,split_into_words/2]).
 
 % Used to read a file into a list of lines.
 % Example files available in:
@@ -34,5 +34,19 @@ show_file_contents([L|Ls]) ->
     show_file_contents(Ls);
  show_file_contents([]) ->
     ok.    
-     
 
+
+% BEGIN ...
+
+split_into_words([], Words) ->
+    Words;
+split_into_words([H|T]=Chars, Words) ->
+    case is_word_char(H) of
+        true -> {Word, Remaining} = lists:splitwith(fun (C) -> is_word_char(C) end, Chars),
+                split_into_words(Remaining, [Word | Words]);
+        false -> split_into_words(T, Words)
+    end.
+
+
+is_word_char(Char) -> 
+    (Char >= $A) and (Char =< $z).
