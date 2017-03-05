@@ -1,5 +1,5 @@
 -module(index).
--export([get_file_contents/1,show_file_contents/1,index_lines/1]).
+-export([get_file_contents/1,show_file_contents/1,index_lines/1,linenums_to_ranges/1,rangify_index/1]).
 
 % Used to read a file into a list of lines.
 % Example files available in:
@@ -38,32 +38,40 @@ show_file_contents([L|Ls]) ->
 
 % BEGIN ...
 
-% TODO {"freedom","\e"}
-% TODO {"government","\e"}
-% TODO {"But","\r"},
-% TODO {"larger","\r"},
-% TODO {"sense","\r"},
-% TODO {"dedicate","\r\b"},
-% TODO {"should","\v"},
-% TODO {"do","\v"},
-% TODO {"might","\n"},
-% TODO {"live","\n"},
-% TODO {"altogether","\n"},
-% TODO {"fitting","\n"},
-% TODO {"proper","\n"},
-% TODO {"resting","\t"},
-% TODO {"place","\t"},
-% TODO {"those","\t"},
-% TODO {"their","\t"},
-% TODO {"lives","\t"},
-% TODO {"come","\b"},
-% TODO {"portion","\b"},
-% TODO {"as","\b"},
-% TODO {"final","\b"},
-
 
 % to see full contents of the resulting index:
 % io:format("~p~n", [Index])
+
+%% paginate_index(Index) ->
+%%     paginate_index(Index, []).
+
+%% paginate_index([], PaginatedIndex) ->
+%%     PaginatedIndex;
+%% paginate_index([Entry|Entries], PaginatedIndex) ->
+%%     paginate_index(Entries, [paginate_entry(Entry) | PaginatedIndex]).
+
+rangify_index(Index) ->
+    rangify_index(Index, []).
+
+rangify_index([], RangifiedIndex) ->
+    RangifiedIndex;
+rangify_index([{Word, LineNums}|Entries], RangifiedIndex) ->
+    rangify_index(Entries, [{Word, linenums_to_ranges(LineNums)} | RangifiedIndex]).
+
+    
+
+linenums_to_ranges(LineNums) ->
+    linenums_to_ranges(LineNums, [], [], []).
+
+linenums_to_ranges([], [Start|_], [End|_], Ranges) ->
+    [{Start,End} | Ranges];
+linenums_to_ranges([H|T], [], [], Ranges) ->
+    linenums_to_ranges(T, [H], [H], Ranges);
+linenums_to_ranges([H|T], [Start|_]=X, End, Ranges) when (H==Start) or (H==Start-1) ->
+    linenums_to_ranges(T, [H | X], End, Ranges);
+linenums_to_ranges([H|T], [Start|_], [End|_], Ranges) ->
+    linenums_to_ranges(T, [H], [H], [{Start,End} | Ranges]).
+
 
 index_lines(Lines) ->
     index_lines(Lines, 1, []).
