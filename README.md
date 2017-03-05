@@ -1,4 +1,7 @@
-###Indexing a file
+##### FutureLearn / University of Kent: Functional Programming in Erlang
+### Week 2 Assignment
+
+#####Indexing a file
 The aim of this exercise is to index a text file, by line number. We can think
 of the input being a list of text strings, and below we’ve provided an outline
 Erlang module that reads text files into this format, as well as a couple of
