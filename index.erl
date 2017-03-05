@@ -38,7 +38,6 @@ show_file_contents([L|Ls]) ->
 
 % BEGIN ...
 
-% TODO {"\\consecrated",[16]}
 % TODO {"freedom","\e"}
 % TODO {"government","\e"}
 % TODO {"But","\r"},
@@ -90,7 +89,7 @@ split_into_words([H|T]=Chars, Words) ->
 
 
 is_word_char(Char) -> 
-    (Char >= $A) and (Char =< $z).
+    ((Char >= $A) and (Char =< $Z)) or ((Char >= $a) and (Char =< $z)).
 
 
 add_to_index(Index, [], _LineNum) ->
