@@ -37,11 +37,10 @@ split_into_words(Line) ->
 split_into_words([], Words) ->
     Words;
 % we use lists:splitwith to assemble all leading 'word characters' into a word.
-% cannot seem to pass the function is_word_char directly, so have wrapped it in a lambda.
 % 'non word characters' are treated as delimeters, and are discarded.
 split_into_words([First|Rest]=Line, Words) ->
     case is_word_char(First) of
-        true -> {Word, AfterWord} = lists:splitwith(fun (C) -> is_word_char(C) end, Line),
+        true -> {Word, AfterWord} = lists:splitwith(fun is_word_char/1, Line),
                 split_into_words(AfterWord, [Word | Words]);
         false -> split_into_words(Rest, Words)
     end.
